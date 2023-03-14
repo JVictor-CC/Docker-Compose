@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+
+  apache:
+    image: webdevops/php-apache:alpine-php7
+    ports:
+      - "4500:80"
+    volumes:
+      - /composer/data/php/:/app
+    networks:
+      - composer_network
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "minhasenha"
+      MYSQL_DATABASE: "formdb"
+    ports:
+      - "3306:3306"
+    volumes:
+      - /composer/data/mysql:/var/lib/mysql
+    networks:
+      - composer_network
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "minhasenha"
+      PMA_HOST: mysql
+    ports:
+      - "8080:80"
+    volumes:
+      - /composer/data/php/admin/uploads.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      - composer_network
+
+networks:
+  composer_network:
+    driver: bridge
